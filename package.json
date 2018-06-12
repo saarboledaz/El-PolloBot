@@ -1,0 +1,12 @@
+{
+  "name": "Bobazo",
+  "version": "1.0.0",
+  "description": "Im the coolest bot out there son",
+  "main": "bot.js",
+  "author": "xnakewaring+triple",
+  "dependencies": {
+    "discord.io": "github:woor/discord.io#gateway_v6",
+    "winston": "^2.4.0",
+    "mongodb": "^3.6.5"
+  }
+}

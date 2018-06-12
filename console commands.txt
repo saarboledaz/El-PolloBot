@@ -1,0 +1,2 @@
+npm install woor/discord.io#gateway_v6 --save
+node bot.js
