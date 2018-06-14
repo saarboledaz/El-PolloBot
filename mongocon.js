@@ -1,102 +1,94 @@
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
 
+
+
 MongoClient.connect(url, function(err, db) {
   if (err) throw err;
   console.log("Database reached!");
-  var dbo = db.db("PolloDB");
+  let dbo = db.db("PolloDB");
   db.close();
 });
 
 var insertQuote = function (vquote,vquoted,callback){
-  MongoClient.connect(url, function(err, db){
+  MongoClient.connect(url, (err, db) => {
     if (err) throw err;
-    var dbo = db.db("PolloDB");
-    var obquote = { quote : vquote, quoted : vquoted};
-    dbo.collection("quotes").insertOne(obquote, function(err,res) {
+    let dbo = db.db("PolloDB");
+    let obquote = { quote : vquote, quoted : vquoted};
+    dbo.collection("quotes").insertOne(obquote, (err,res) =>  {
       if (err) throw err;
-      console.log("Quote inserted");
-      console.log("+",err,"+");
-      console.log("-",res.ops[0],"-");
-      db.close();
-      callback = res.ops[0];
+      callback(res.ops[0]);
     })
+    db.close();
   })
 }
 
 var findQuote = function (vquoted,callback){
-  MongoClient.connect(url, function(err,db){
+  MongoClient.connect(url,(err,db) =>{
     if(err) throw err;
-    var dbo = db.db("PolloDB");
-    dbo.collection("quotes").find({quoted : vquoted}).toArray(function(err,res){
+    let dbo = db.db("PolloDB");
+    dbo.collection("quotes").find({quoted : vquoted}).toArray( (err,res) => {
       if(err) throw err;
-      db.close();
-      console.log("Quote found");
-      console.log("+",err,"+");
-      console.log("-",res,"-");
-      callback = res;
+      callback(res);
 
     })
-
+    db.close();
   })
 }
 var findQuoteID = function (id,callback){
-  MongoClient.connect(url, function(err,db){
+  MongoClient.connect(url,(err,db) =>{
     if(err) throw err;
-    var dbo = db.db("PolloDB");
-    dbo.collection("quotes").findOne({_id : id} ,function(err,res){
+    let dbo = db.db("PolloDB");
+    dbo.collection("quotes").findOne({_id : id} ,(err,res)=>{
       if(err) throw err;
-      db.close();
-      console.log("Quote found");
-      console.log(err);
-      console.log(res);
-      callback = res;
+      callback(res);
 
     })
-
+    db.close();
   })
-
 }
 
 var randomQuote = function (callback){
-  MongoClient.connect(url, function(err,db){
+  MongoClient.connect(url,(err,db) =>{
     if(err) throw err;
-    var dbo = db.db("PolloDB");
-    dbo.collection("quotes").aggregate({ $sample: {size: 1} }, function(err,obj){
+    let dbo = db.db("PolloDB");
+    dbo.collection("quotes").aggregate({ $sample: {size: 1} },(err,obj) =>{
       if(err) throw err;
       obj.toArray(function(err1,res){
         if(err1) throw err1;
-        db.close();
-        console.log("Random quote requested and found");
-        console.log(err);
-        console.log(res);
-        console.log(obj);
-        console.log(err1);
-        callback= res[0];
+        callback(res[0]);
 
       })
+      db.close();
 
     })
   })
 }
 delQuote = function (id,callback){
-  MongoClient.connect(url, function(err,db){
+  MongoClient.connect(url, (err,db)=>{
     if(err) throw err;
-    var dbo = db.db("PolloDB");
-    dbo.collection("quotes").deleteOne({ _id : id}, function(err,obj) {
+    let dbo = db.db("PolloDB");
+    dbo.collection("quotes").deleteOne({ _id : id}, (err,obj)=> {
       if (err) throw err;
-      db.close();
-      console.log("Quote deleted");
-      callback = res;
+      callback(res);
     })
+    db.close();
   })
 }
-
-insertQuote("pollo","PolloDB");
-findQuote("PolloDB", function(founds){
-  console.log("wtf");
-  findQuoteID(founds[0]._id);
+/* Testing
+var myQuote;
+insertQuote("pollo","PolloDB", function (insertedQuote){
+  myQuote = insertedQuote;
 });
+console.log(myQuote);
+
+findQuote("PolloDB", function(founds){
+  console.log(founds);
+  findQuoteID(founds[0]._id,function(object){
+    console.log(object);
+  });
+});
+*/
 
 module.exports={
 
